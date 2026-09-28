@@ -1,0 +1,49 @@
+# ===== Du lieu nang / co the sinh lai tu script =====
+# Video goc tai bang yt-dlp (dung luong lon, ban quyen broadcast)
+data/videos/
+# Clip da cat va clip da crop
+data/clips/
+data/clips_multi/
+data/clips_cropped_multi/
+# Keypoint da trich xuat va cac tap train/val/test (.npz)
+data/pose_features_multi/
+data/dataset_splits/
+# Video debug
+debug_mp4/
+*.mp4
+*.avi
+*.mov
+
+# GIU LAI trong git (nho, can de tai lap): data/raw/ShuttleSet (CSV),
+# data/dataset_manifest.csv, matches.csv, cac script
+
+# ===== Model da train =====
+ai/models/checkpoints/*
+!ai/models/checkpoints/.gitkeep
+models/
+*.keras
+*.h5
+*.task
+# (Model cuoi cung can commit: dung `git add -f <file>` khi chot)
+
+# ===== Python =====
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+
+# ===== Jupyter =====
+.ipynb_checkpoints/
+
+# ===== Node (frontend) =====
+node_modules/
+dist/
+build/
+
+# ===== OS / editor / log =====
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.log
