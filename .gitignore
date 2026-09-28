@@ -20,7 +20,7 @@ debug_mp4/
 # ===== Model da train =====
 ai/models/checkpoints/*
 !ai/models/checkpoints/.gitkeep
-models/
+/models/
 *.keras
 *.h5
 *.task
