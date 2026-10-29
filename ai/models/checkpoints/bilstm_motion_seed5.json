@@ -1,0 +1,15 @@
+{
+  "features": "motion",
+  "model": "bilstm",
+  "labels": [
+    "clear",
+    "net_shot",
+    "short_service",
+    "smash"
+  ],
+  "input_shape": [
+    32,
+    231
+  ],
+  "sha256": "bbbccf4bdfe3ed8b07c265fcf4fceb36bf6b75799d80b4f5cb691a83fc4345bd"
+}

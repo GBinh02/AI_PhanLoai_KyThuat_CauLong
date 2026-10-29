@@ -28,7 +28,9 @@ def main():
 
     ckpt = Path(args.checkpoint)
     meta_path = ckpt.with_suffix(".json")
-    feats = json.loads(meta_path.read_text())["features"] if meta_path.exists() else "raw"
+    if not meta_path.exists():
+        raise SystemExit(f"Missing checkpoint metadata: {meta_path}")
+    feats = json.loads(meta_path.read_text())["features"]
 
     X, y = load_split(args.data_dir, "test")
     X = build_features(X, feats)

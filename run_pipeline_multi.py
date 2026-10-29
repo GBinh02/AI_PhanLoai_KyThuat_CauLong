@@ -75,7 +75,7 @@ def cmd_download(args):
     df = pd.read_csv(args.config)
     os.makedirs(args.videos_dir, exist_ok=True)
     extract_script = args.extract_script or find_script(
-        "extract_stroke_clips.py", [SCRIPT_DIR, os.path.join(SCRIPT_DIR, "ai", "pose_extraction")]
+        "extract_stroke_clips.py", [SCRIPT_DIR, os.path.join(SCRIPT_DIR, "scripts", "data_prep"), os.path.join(SCRIPT_DIR, "ai", "pose_extraction")]
     )
 
     for _, row in df.iterrows():
@@ -97,13 +97,13 @@ def cmd_download(args):
 def cmd_process(args):
     df = pd.read_csv(args.config)
     extract_script = args.extract_script or find_script(
-        "extract_stroke_clips.py", [SCRIPT_DIR, os.path.join(SCRIPT_DIR, "ai", "pose_extraction")]
+        "extract_stroke_clips.py", [SCRIPT_DIR, os.path.join(SCRIPT_DIR, "scripts", "data_prep"), os.path.join(SCRIPT_DIR, "ai", "pose_extraction")]
     )
     crop_script = args.crop_script or find_script(
-        "crop_player_roi.py", [SCRIPT_DIR, os.path.join(SCRIPT_DIR, "ai", "pose_extraction")]
+        "crop_player_roi.py", [SCRIPT_DIR, os.path.join(SCRIPT_DIR, "scripts", "data_prep"), os.path.join(SCRIPT_DIR, "ai", "pose_extraction")]
     )
     pose_script = args.pose_script or find_script(
-        "extract_pose_features.py", [SCRIPT_DIR, os.path.join(SCRIPT_DIR, "ai", "pose_extraction")]
+        "extract_pose_features.py", [SCRIPT_DIR, os.path.join(SCRIPT_DIR, "scripts", "data_prep"), os.path.join(SCRIPT_DIR, "ai", "pose_extraction")]
     )
 
     os.makedirs(args.clips_root, exist_ok=True)
