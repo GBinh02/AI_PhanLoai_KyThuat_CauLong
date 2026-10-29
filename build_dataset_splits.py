@@ -96,6 +96,10 @@ def main():
     val_matches = [m.strip() for m in args.val.split(",") if m.strip()]
     test_matches = [m.strip() for m in args.test.split(",") if m.strip()]
 
+    groups = [set(train_matches), set(val_matches), set(test_matches)]
+    if any(groups[i] & groups[j] for i in range(3) for j in range(i + 1, 3)):
+        raise SystemExit("A match must belong to exactly one split")
+
     all_named = set(train_matches) | set(val_matches) | set(test_matches)
     all_in_manifest = set(df["match"].unique())
     unknown = all_named - all_in_manifest
