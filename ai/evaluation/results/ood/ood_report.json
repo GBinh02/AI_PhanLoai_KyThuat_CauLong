@@ -1,0 +1,220 @@
+{
+  "labels": [
+    "clear",
+    "net_shot",
+    "short_service",
+    "smash"
+  ],
+  "n_annotated": 105,
+  "status_counts": {
+    "OK": 95,
+    "POSE_INSUFFICIENT": 10
+  },
+  "bilstm": {
+    "checkpoint": "ai/models/checkpoints/bilstm_motion_seed5.keras",
+    "features": "motion",
+    "accuracy": 0.5263157894736842,
+    "macro_f1": 0.5218689405958047,
+    "per_class": {
+      "clear": {
+        "precision": 0.4,
+        "recall": 0.36363636363636365,
+        "f1": 0.38095238095238093,
+        "support": 22
+      },
+      "net_shot": {
+        "precision": 0.5294117647058824,
+        "recall": 0.6666666666666666,
+        "f1": 0.5901639344262295,
+        "support": 27
+      },
+      "short_service": {
+        "precision": 0.8181818181818182,
+        "recall": 0.45,
+        "f1": 0.5806451612903226,
+        "support": 20
+      },
+      "smash": {
+        "precision": 0.5,
+        "recall": 0.5769230769230769,
+        "f1": 0.5357142857142857,
+        "support": 26
+      }
+    },
+    "confusion_matrix": [
+      [
+        8,
+        3,
+        0,
+        11
+      ],
+      [
+        3,
+        18,
+        2,
+        4
+      ],
+      [
+        4,
+        7,
+        9,
+        0
+      ],
+      [
+        5,
+        6,
+        0,
+        15
+      ]
+    ],
+    "system_accuracy": 0.47619047619047616,
+    "shuttleset_test": [
+      0.845945945945946,
+      0.8246613695143108
+    ]
+  },
+  "rule_based": {
+    "thresholds": {
+      "h": 1.3486032485961914,
+      "v": 0.9498556852340698,
+      "s": 1.428051233291626,
+      "vfeat": "peak_speed",
+      "tree": "A"
+    },
+    "accuracy": 0.6,
+    "macro_f1": 0.5918253979796805,
+    "per_class": {
+      "clear": {
+        "precision": 0.5238095238095238,
+        "recall": 0.5,
+        "f1": 0.5116279069767442,
+        "support": 22
+      },
+      "net_shot": {
+        "precision": 0.7857142857142857,
+        "recall": 0.4074074074074074,
+        "f1": 0.5365853658536586,
+        "support": 27
+      },
+      "short_service": {
+        "precision": 0.5588235294117647,
+        "recall": 0.95,
+        "f1": 0.7037037037037037,
+        "support": 20
+      },
+      "smash": {
+        "precision": 0.6153846153846154,
+        "recall": 0.6153846153846154,
+        "f1": 0.6153846153846154,
+        "support": 26
+      }
+    },
+    "confusion_matrix": [
+      [
+        11,
+        2,
+        2,
+        7
+      ],
+      [
+        3,
+        11,
+        10,
+        3
+      ],
+      [
+        1,
+        0,
+        19,
+        0
+      ],
+      [
+        6,
+        1,
+        3,
+        16
+      ]
+    ],
+    "system_accuracy": 0.5428571428571428,
+    "shuttleset_test": [
+      0.6189189189189189,
+      0.5904150323744061
+    ]
+  },
+  "by_side": [
+    {
+      "player_side": "far",
+      "n": 27,
+      "acc_pred_bilstm": 0.444,
+      "acc_pred_rule": 0.296
+    },
+    {
+      "player_side": "near",
+      "n": 68,
+      "acc_pred_bilstm": 0.559,
+      "acc_pred_rule": 0.721
+    }
+  ],
+  "by_person": [
+    {
+      "person": "video4_player1",
+      "n": 9,
+      "acc_pred_bilstm": 0.444,
+      "acc_pred_rule": 0.667
+    },
+    {
+      "person": "video4_player2",
+      "n": 4,
+      "acc_pred_bilstm": 0.5,
+      "acc_pred_rule": 0.0
+    },
+    {
+      "person": "video6_player1",
+      "n": 21,
+      "acc_pred_bilstm": 0.429,
+      "acc_pred_rule": 0.905
+    },
+    {
+      "person": "video6_player2",
+      "n": 3,
+      "acc_pred_bilstm": 0.667,
+      "acc_pred_rule": 1.0
+    },
+    {
+      "person": "video7_player1",
+      "n": 7,
+      "acc_pred_bilstm": 0.857,
+      "acc_pred_rule": 0.429
+    },
+    {
+      "person": "video7_player2",
+      "n": 5,
+      "acc_pred_bilstm": 0.6,
+      "acc_pred_rule": 0.2
+    },
+    {
+      "person": "video8_player1",
+      "n": 9,
+      "acc_pred_bilstm": 0.889,
+      "acc_pred_rule": 0.889
+    },
+    {
+      "person": "video8_player2",
+      "n": 4,
+      "acc_pred_bilstm": 0.5,
+      "acc_pred_rule": 0.75
+    },
+    {
+      "person": "video9_player1",
+      "n": 22,
+      "acc_pred_bilstm": 0.5,
+      "acc_pred_rule": 0.591
+    },
+    {
+      "person": "video9_player2",
+      "n": 11,
+      "acc_pred_bilstm": 0.273,
+      "acc_pred_rule": 0.091
+    }
+  ]
+}
