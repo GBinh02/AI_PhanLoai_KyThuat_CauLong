@@ -47,3 +47,7 @@ Thumbs.db
 .vscode/
 .idea/
 *.log
+
+# ===== Web app =====
+backend/storage/
+models/

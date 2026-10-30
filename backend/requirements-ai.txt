@@ -1,0 +1,8 @@
+# Chi can khi bat lop AI (muc 5.2). Tang san (requirements.txt) chay duoc ma khong can cac goi nay.
+# Can them ffmpeg + ffprobe trong PATH.
+-r requirements.txt
+tensorflow
+mediapipe
+opencv-python
+numpy
+pandas
