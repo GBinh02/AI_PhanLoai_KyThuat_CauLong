@@ -1,12 +1,15 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { api, fmtSize, fmtTime } from "../api.js";
+import Icon from "../components/Icons.jsx";
 
 export default function LibraryPage() {
   const [videos, setVideos] = useState(null);
   const [error, setError] = useState("");
   const [uploading, setUploading] = useState(false);
+  const [file, setFile] = useState(null);
   const [title, setTitle] = useState("");
+  const [over, setOver] = useState(false);
   const fileRef = useRef(null);
 
   const load = useCallback(() => {
@@ -14,15 +17,17 @@ export default function LibraryPage() {
   }, []);
   useEffect(load, [load]);
 
+  const pick = (f) => { if (f) { setFile(f); setError(""); } };
+  const onDrop = (e) => { e.preventDefault(); setOver(false); pick(e.dataTransfer.files?.[0]); };
+
   const upload = async (e) => {
     e.preventDefault();
-    const file = fileRef.current?.files?.[0];
     if (!file) return;
     setError(""); setUploading(true);
     try {
       await api.upload(file, title.trim());
-      setTitle("");
-      fileRef.current.value = "";
+      setTitle(""); setFile(null);
+      if (fileRef.current) fileRef.current.value = "";
       load();
     } catch (err) {
       setError(err.message);
@@ -38,36 +43,53 @@ export default function LibraryPage() {
 
   return (
     <>
-      <form className="card upload" onSubmit={upload}>
-        <h2>Tải video lên</h2>
-        <div className="row">
-          <input ref={fileRef} type="file" accept="video/*,.mkv,.avi" required />
-          <input placeholder="Tiêu đề (không bắt buộc)" value={title} onChange={(e) => setTitle(e.target.value)} maxLength={120} />
-          <button className="primary" disabled={uploading}>{uploading ? "Đang tải lên…" : "Tải lên"}</button>
+      <div className="page-head">
+        <h1>Video của bạn</h1>
+      </div>
+
+      <form className={`dropzone ${over ? "over" : ""}`} onSubmit={upload}
+            onDragOver={(e) => { e.preventDefault(); setOver(true); }} onDragLeave={() => setOver(false)} onDrop={onDrop}>
+        <span className="badge"><Icon name="upload" size={22} /></span>
+        <div className="grow">
+          {file ? <div className="picked">{file.name} <span className="muted small">({fmtSize(file.size)})</span></div>
+                : <div><strong>Kéo video vào đây</strong> <span className="muted">hoặc</span>{" "}
+                    <button type="button" className="link" onClick={() => fileRef.current?.click()}>chọn từ máy</button></div>}
+          <div className="muted small">MP4 (H.264) phát mượt nhất; có thể tua và xem từng khung hình.</div>
         </div>
-        <p className="muted small">Nên dùng MP4 (H.264) để trình duyệt phát được mượt, tua và xem từng khung hình.</p>
+        <input ref={fileRef} type="file" accept="video/*,.mkv,.avi" hidden onChange={(e) => pick(e.target.files?.[0])} />
+        {file && (
+          <>
+            <input placeholder="Tiêu đề (không bắt buộc)" value={title} onChange={(e) => setTitle(e.target.value)} maxLength={120} />
+            <button className="btn primary" disabled={uploading}>{uploading ? <><span className="spinner" />Đang tải lên</> : "Tải lên"}</button>
+            <button type="button" className="btn ghost" onClick={() => { setFile(null); if (fileRef.current) fileRef.current.value = ""; }}>Bỏ chọn</button>
+          </>
+        )}
       </form>
 
-      {error && <p className="error">{error}</p>}
+      {error && <p className="error" role="alert" style={{ marginBottom: "1rem" }}>{error}</p>}
 
-      <h2>Lịch sử video</h2>
       {videos === null ? <p className="muted">Đang tải…</p> : videos.length === 0 ? (
-        <p className="muted">Chưa có video nào. Hãy tải một video lên để bắt đầu.</p>
+        <div className="empty"><Icon name="film" size={30} /><p style={{ marginTop: ".5rem" }}>Chưa có video nào. Kéo một video vào khung phía trên để bắt đầu.</p></div>
       ) : (
         <ul className="grid">
           {videos.map((v) => (
-            <li key={v.id} className="card video-card">
+            <li key={v.id} className="vcard">
               <Link to={`/videos/${v.id}`}>
-                <strong>{v.title}</strong>
-                <span className="muted small">
-                  {fmtTime(v.duration)} · {v.width}×{v.height} · {fmtSize(v.size_bytes)}
-                </span>
+                <div className="thumb">
+                  <video src={`${api.streamUrl(v.id)}#t=1`} preload="metadata" muted playsInline tabIndex={-1} />
+                  <span className="dur num">{fmtTime(v.duration)}</span>
+                </div>
+                <div className="body">
+                  <span className="t" title={v.title}>{v.title}</span>
+                  <div className="chips">
+                    <span className="chip">{v.n_labels} nhãn</span>
+                    <span className="chip ai">{v.n_predictions} kết quả AI</span>
+                    <span className="chip">{fmtSize(v.size_bytes)}</span>
+                  </div>
+                  <span className="muted small">{new Date(v.created_at + "Z").toLocaleString("vi-VN")}</span>
+                </div>
               </Link>
-              <span className="small">
-                {v.n_labels} nhãn thủ công · {v.n_predictions} kết quả AI
-              </span>
-              <span className="muted small">{new Date(v.created_at + "Z").toLocaleString("vi-VN")}</span>
-              <button className="link danger" onClick={() => remove(v)}>Xóa</button>
+              <button className="btn icon-only del" onClick={() => remove(v)} aria-label={`Xóa ${v.title}`} title="Xóa video"><Icon name="trash" size={16} /></button>
             </li>
           ))}
         </ul>

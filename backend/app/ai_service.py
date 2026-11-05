@@ -45,8 +45,9 @@ def status() -> dict:
                          ("cv2", "opencv-python"), ("numpy", "numpy")):
             if importlib.util.find_spec(mod) is None:
                 reasons.append(f"Thiếu thư viện {pkg} (pip install -r backend/requirements-ai.txt).")
-        if not config.AI_CHECKPOINT.is_file():
-            reasons.append(f"Không thấy checkpoint {config.AI_CHECKPOINT.name}.")
+        missing = [p.name for p in config.AI_CHECKPOINTS if not p.is_file()]
+        if not config.AI_CHECKPOINTS or missing:
+            reasons.append(f"Không thấy checkpoint {', '.join(missing) or '(chưa cấu hình)'}.")
         if shutil.which("ffmpeg") is None or shutil.which("ffprobe") is None:
             reasons.append("Thiếu ffmpeg/ffprobe trong PATH.")
     return {
@@ -55,7 +56,8 @@ def status() -> dict:
         "reasons": reasons,
         "classes": config.CLASS_NAMES,
         "class_labels": config.CLASS_LABELS_VI,
-        "model": "BiLSTM(64) + motion features",
+        "model": (f"BiLSTM(64) + motion, gộp {len(config.AI_CHECKPOINTS)} mô hình tăng cường dữ liệu (V2a)"
+                  if len(config.AI_CHECKPOINTS) > 1 else "BiLSTM(64) + motion"),
     }
 
 
@@ -92,7 +94,7 @@ def _get_model():
     with _lock:
         if _model is None:
             from tensorflow import keras  # import cham -> chi khi can
-            _model = keras.models.load_model(config.AI_CHECKPOINT, compile=False)
+            _model = [keras.models.load_model(p, compile=False) for p in config.AI_CHECKPOINTS]
         return _model
 
 
@@ -185,7 +187,7 @@ def analyze(video_path: Path, *, duration: float, width: int, height: int,
             continue
         x = build_features(np.asarray(feature, dtype=np.float32)[None], config.AI_FEATURE_MODE)
         with _lock:
-            probs = model.predict(x, verbose=0)[0]
+            probs = np.mean([m.predict(x, verbose=0)[0] for m in model], axis=0)  # gop cac mo hinh
         probs = [float(p) for p in probs]
         k = int(np.argmax(probs))
         entry.update(label=config.CLASS_NAMES[k], confidence=probs[k],

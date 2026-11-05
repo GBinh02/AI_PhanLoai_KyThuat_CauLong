@@ -19,7 +19,7 @@ from backend.app.main import app  # noqa: E402
 
 from .conftest import TMP as _tmp  # noqa: E402
 
-pytestmark = pytest.mark.skipif(not config.AI_CHECKPOINT.is_file(), reason="chua co checkpoint")
+pytestmark = pytest.mark.skipif(not all(p.is_file() for p in config.AI_CHECKPOINTS), reason="chua co checkpoint")
 
 
 @pytest.fixture(scope="module")
@@ -120,3 +120,9 @@ def test_crop_keeps_training_aspect_and_stays_inside_frame(box):
     x, y, w, h = ai_service._box_to_pixels(box, 640, 360)
     assert 0 <= x and 0 <= y and x + w <= 640 and y + h <= 360
     assert w / h == pytest.approx(0.65, abs=0.03)
+
+
+def test_uses_v2a_ensemble_by_default():
+    names = [p.name for p in config.AI_CHECKPOINTS]
+    assert names == [f"bilstm_motion_aug_seed{s}.keras" for s in range(6)]
+    assert len(ai_service._get_model()) == 6

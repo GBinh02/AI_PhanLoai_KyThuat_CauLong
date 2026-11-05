@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { fmtTime } from "../api.js";
+import Icon from "./Icons.jsx";
 
 const RATES = [0.1, 0.25, 0.5, 1, 1.5, 2];
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
@@ -84,7 +85,7 @@ export default function Player({ ref, src, fps, width, height, drawing, box, onB
 
   return (
     <div className="player">
-      <div className="stage" style={{ width: `min(100%, calc(68vh * ${ar}))`, aspectRatio: ar }}>
+      <div className="stage" style={{ width: `min(100%, calc(66vh * ${ar}))`, aspectRatio: ar }}>
         <video
           ref={videoRef} src={src} playsInline preload="auto"
           onLoadedMetadata={(e) => setDuration(e.currentTarget.duration)}
@@ -92,6 +93,7 @@ export default function Player({ ref, src, fps, width, height, drawing, box, onB
           onClick={() => !drawing && toggle()}
         />
         <div className={`overlay ${drawing ? "drawing" : ""}`} onPointerDown={down} onPointerMove={move} onPointerUp={up}>
+          {drawing && !draft && <span className="hint">Kéo chuột quanh người đánh</span>}
           {shown && <div className="box" style={pct(shown)} />}
           {extraBox && <div className="box alt" style={pct(extraBox)} />}
         </div>
@@ -106,17 +108,19 @@ export default function Player({ ref, src, fps, width, height, drawing, box, onB
       </div>
 
       <div className="controls">
-        <button onClick={() => seek(time - 5)} title="Lùi 5 giây">⏪ 5s</button>
-        <button onClick={() => step(-1)} title="Lùi 1 khung hình (←)">⏮ Khung</button>
-        <button className="primary" onClick={toggle} title="Phát/Dừng (Space)">{paused ? "▶ Phát" : "⏸ Dừng"}</button>
-        <button onClick={() => step(1)} title="Tiến 1 khung hình (→)">Khung ⏭</button>
-        <button onClick={() => seek(time + 5)} title="Tiến 5 giây">5s ⏩</button>
-        <label className="rate">Tốc độ
-          <select value={rate} onChange={(e) => setRate(parseFloat(e.target.value))}>
-            {RATES.map((r) => <option key={r} value={r}>{r}×</option>)}
-          </select>
-        </label>
-        <span className="time">{fmtTime(time)} / {fmtTime(duration)} · khung {Math.round(time * (fps || 30))}</span>
+        <button className="cbtn" onClick={() => seek(time - 5)} title="Lùi 5 giây" aria-label="Lùi 5 giây"><Icon name="back5" /></button>
+        <button className="cbtn" onClick={() => step(-1)} title="Lùi 1 khung hình (←)" aria-label="Lùi 1 khung hình"><Icon name="stepBack" /></button>
+        <button className="cbtn play" onClick={toggle} title="Phát/Dừng (Space)" aria-label={paused ? "Phát" : "Dừng"}>
+          <Icon name={paused ? "play" : "pause"} size={22} />
+        </button>
+        <button className="cbtn" onClick={() => step(1)} title="Tiến 1 khung hình (→)" aria-label="Tiến 1 khung hình"><Icon name="stepFwd" /></button>
+        <button className="cbtn" onClick={() => seek(time + 5)} title="Tiến 5 giây" aria-label="Tiến 5 giây"><Icon name="fwd5" /></button>
+        <div className="rates" role="group" aria-label="Tốc độ phát">
+          {RATES.map((r) => (
+            <button key={r} className={r === rate ? "on" : ""} onClick={() => setRate(r)} aria-pressed={r === rate}>{r}×</button>
+          ))}
+        </div>
+        <div className="time">{fmtTime(time)} <span>/ {fmtTime(duration)}</span><br /><span>khung {Math.round(time * (fps || 30))}</span></div>
       </div>
     </div>
   );

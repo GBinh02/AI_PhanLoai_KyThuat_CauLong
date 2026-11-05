@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { api } from "../api.js";
+import Icon from "../components/Icons.jsx";
 import AiPanel from "../components/AiPanel.jsx";
 import LabelPanel from "../components/LabelPanel.jsx";
 import Player from "../components/Player.jsx";
@@ -86,17 +87,17 @@ export default function VideoPage() {
 
   return (
     <>
-      <div className="row between">
+      <div className="vhead">
         <div>
-          <Link to="/" className="small">← Lịch sử video</Link>
-          <h1 className="title">{video.title}</h1>
+          <Link to="/" className="crumbs link"><Icon name="back" size={15} />Video của bạn</Link>
+          <h1>{video.title}</h1>
         </div>
         <div className="row">
-          <button className="link" onClick={rename}>Đổi tên</button>
-          <button className="link danger" onClick={remove}>Xóa</button>
+          <button className="btn ghost sm" onClick={rename}><Icon name="edit" size={15} />Đổi tên</button>
+          <button className="btn ghost danger sm" onClick={remove}><Icon name="trash" size={15} />Xóa</button>
         </div>
       </div>
-      {error && <p className="error">{error}</p>}
+      {error && <p className="error" role="alert" style={{ marginBottom: "1rem" }}>{error}</p>}
 
       <div className="layout">
         <div>
@@ -105,7 +106,7 @@ export default function VideoPage() {
             drawing={aiActive && drawing} box={aiActive ? box : null} onBox={(b) => { setBox(b); setSelectedId(null); setDrawing(false); }}
             extraBox={aiActive && selected ? selected.box : null} marks={marks}
           />
-          <p className="muted small">Phím tắt: Space phát/dừng · ←/→ lùi/tiến 1 khung hình · Shift+←/→ lùi/tiến 1 giây.</p>
+          <p className="keys"><kbd>Space</kbd> phát hoặc dừng &nbsp; <kbd>←</kbd> <kbd>→</kbd> lùi, tiến 1 khung hình &nbsp; <kbd>Shift</kbd> + <kbd>←</kbd> <kbd>→</kbd> lùi, tiến 1 giây</p>
         </div>
         <div className="side">
           <LabelPanel labels={labels} getTime={getTime} onAdd={addLabel} onDelete={delLabel} onSeek={seek} />
