@@ -50,3 +50,8 @@ Thumbs.db
 
 # ===== Web app =====
 backend/storage/
+
+# Anh ra soat va cache OOD (anh nguoi choi, khong can de tai lap)
+data/ood/review/
+data/ood/crop_review/
+data/ood/crop_cache/
