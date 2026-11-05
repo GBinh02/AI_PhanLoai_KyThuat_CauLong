@@ -19,8 +19,27 @@ ALLOWED_EXT = {".mp4", ".mov", ".m4v", ".webm", ".mkv", ".avi"}
 
 # Lop AI (muc 5.2): co the tat hoan toan bang AI_ENABLED=0 -> tang san van chay.
 AI_ENABLED = os.environ.get("AI_ENABLED", "1") not in ("0", "false", "False", "")
-AI_CHECKPOINT = Path(os.environ.get(
-    "AI_CHECKPOINT", REPO_ROOT / "ai" / "models" / "checkpoints" / "bilstm_motion_seed5.keras"))
+# Mo hinh dung trong web: V2a = trung binh 6 mo hinh bilstm_motion_aug_seed0..5 (xem ai/evaluation/v2_eval.py).
+# AI_CHECKPOINT co the la 1 file, danh sach phan cach bang dau phay, hoac mau glob.
+# Neu chua co cac file V2a thi tu lui ve mo hinh V1 (bilstm_motion_seed5).
+_CK_DIR = REPO_ROOT / "ai" / "models" / "checkpoints"
+
+
+def _resolve_checkpoints():
+    spec = os.environ.get("AI_CHECKPOINT")
+    if spec:
+        paths = []
+        for part in spec.split(","):
+            part = part.strip()
+            hits = sorted(Path().glob(part)) if any(c in part for c in "*?[") else [Path(part)]
+            paths += hits
+        return paths
+    v2a = sorted(_CK_DIR.glob("bilstm_motion_aug_seed*.keras"))
+    return v2a or [_CK_DIR / "bilstm_motion_seed5.keras"]
+
+
+AI_CHECKPOINTS = _resolve_checkpoints()
+AI_CHECKPOINT = AI_CHECKPOINTS[0] if AI_CHECKPOINTS else _CK_DIR / "bilstm_motion_seed5.keras"
 AI_FEATURE_MODE = os.environ.get("AI_FEATURE_MODE", "motion")
 POSE_MODEL = Path(os.environ.get("POSE_MODEL", REPO_ROOT / "models" / "pose_landmarker_full.task"))
 
