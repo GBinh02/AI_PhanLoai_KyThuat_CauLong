@@ -1,0 +1,7 @@
+features,model,augment,seed,params,epochs_run,train_sec,val_loss,val_acc,val_macro_f1,prec_clear,rec_clear,prec_net_shot,rec_net_shot,prec_short_service,rec_short_service,prec_smash,rec_smash
+motion,bilstm,True,0,156275,33,39.8,0.3079,0.9021,0.8553,0.757,0.7,0.949,0.949,0.971,0.957,0.758,0.806
+motion,bilstm,True,1,156275,31,36.9,0.345,0.8737,0.8118,0.565,0.65,0.953,0.926,0.985,0.942,0.723,0.758
+motion,bilstm,True,2,156275,46,55.9,0.3007,0.9046,0.8665,0.673,0.825,0.949,0.935,1.0,0.986,0.825,0.758
+motion,bilstm,True,3,156275,46,54.6,0.2831,0.9072,0.8674,0.769,0.75,0.949,0.945,0.986,0.986,0.766,0.79
+motion,bilstm,True,4,156275,44,52.7,0.3805,0.8969,0.8525,0.659,0.725,0.953,0.931,1.0,0.928,0.779,0.855
+motion,bilstm,True,5,156275,43,52.5,0.3056,0.9072,0.8587,0.7,0.7,0.95,0.954,1.0,0.986,0.79,0.79

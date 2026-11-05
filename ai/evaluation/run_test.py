@@ -10,7 +10,7 @@ from pathlib import Path
 
 import tensorflow as tf
 
-from ai.evaluation.metrics import LABELS, evaluate, plot_confusion_matrix
+from ai.evaluation.metrics import LABELS, evaluate, plot_confusion_matrix, vi_title
 from ai.features.motion import build_features
 from ai.models.classifier.data import load_split
 
@@ -38,7 +38,7 @@ def main():
     tag = ckpt.stem
     out = Path(args.out_dir)
     out.mkdir(parents=True, exist_ok=True)
-    plot_confusion_matrix(m["confusion_matrix"], out / f"{tag}_test_cm.png", f"{tag} (test)")
+    plot_confusion_matrix(m["confusion_matrix"], out / f"{tag}_test_cm.png", vi_title(tag, "test"))
     report = {**m, "confusion_matrix": m["confusion_matrix"].tolist(),
               "labels": LABELS, "features": feats}
     (out / f"{tag}_test.json").write_text(json.dumps(report, indent=2, ensure_ascii=False))

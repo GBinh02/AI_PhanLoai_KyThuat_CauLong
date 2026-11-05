@@ -28,7 +28,7 @@ import numpy as np
 import pandas as pd
 
 from ai.baseline import rule_based as rb
-from ai.evaluation.metrics import LABELS, evaluate, plot_confusion_matrix
+from ai.evaluation.metrics import LABELS, evaluate, plot_confusion_matrix, vi_title
 from ai.features.motion import build_features
 
 LABEL_TO_IDX = {lab: i for i, lab in enumerate(LABELS)}
@@ -188,8 +188,8 @@ def main():
     keep = ["clip_name", "video", "person", "player_side", "label_true", "status",
             "pred_bilstm", "conf_bilstm", "pred_rule"]
     all_df[[c for c in keep if c in all_df.columns]].to_csv(out / "ood_predictions.csv", index=False, lineterminator="\n")
-    plot_confusion_matrix(np.asarray(m_dl["confusion_matrix"]), out / f"{tag}_ood_cm.png", f"{tag} (OOD)")
-    plot_confusion_matrix(np.asarray(m_rb["confusion_matrix"]), out / "rule_based_ood_cm.png", "Rule-based (OOD)")
+    plot_confusion_matrix(np.asarray(m_dl["confusion_matrix"]), out / f"{tag}_ood_cm.png", vi_title(tag, "ood"))
+    plot_confusion_matrix(np.asarray(m_rb["confusion_matrix"]), out / "rule_based_ood_cm.png", "Baseline luật cố định - video tự quay (ngoài miền)")
     report = {
         "labels": LABELS,
         "n_annotated": int(len(df)),
