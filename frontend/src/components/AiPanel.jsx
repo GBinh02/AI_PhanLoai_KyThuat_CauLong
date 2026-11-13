@@ -95,13 +95,13 @@ export default function AiPanel({
               <span className="n">{contact != null ? <Icon name="check" size={14} /> : 1}</span>
               <div className="grow"><div className="lab">Đánh dấu khung vợt chạm cầu</div>
                 <div className="val">{contact != null ? `Đã chọn ${fmtTime(contact)}` : "Tua đúng khung hình rồi bấm nút"}</div></div>
-              <button className="btn sm" onClick={onMarkContact}><Icon name="target" size={15} />Đánh dấu</button>
+              <button className="btn secondary sm" onClick={onMarkContact}><Icon name="target" size={15} />Đánh dấu</button>
             </div>
             <div className={`step ${s2}`}>
               <span className="n">{box ? <Icon name="check" size={14} /> : 2}</span>
               <div className="grow"><div className="lab">Vẽ hộp quanh người đánh</div>
                 <div className="val">{box ? "Đã có hộp" : "Ôm sát người, hệ thống tự chỉnh đúng tỉ lệ"}</div></div>
-              <button className={`btn sm ${drawing ? "primary" : ""}`} onClick={onToggleDraw}><Icon name="box" size={15} />{drawing ? "Đang vẽ" : "Vẽ hộp"}</button>
+              <button className={`btn sm ${drawing ? "primary" : "secondary"}`} onClick={onToggleDraw}><Icon name="box" size={15} />{drawing ? "Đang vẽ" : "Vẽ hộp"}</button>
               {box && <button className="btn ghost sm" onClick={onClearBox}>Xóa</button>}
             </div>
             <div className={`step ${s3}`}>
@@ -118,8 +118,8 @@ export default function AiPanel({
             ))}
           </div>
 
-          <button className="btn primary wide" disabled={!ready || analyzing} onClick={onAnalyze}>
-            {analyzing ? <><span className="spinner" />Đang phân tích…</> : "Phân tích cú đánh"}
+          <button className="btn accent wide" disabled={!ready || analyzing} onClick={onAnalyze}>
+            {analyzing ? <><span className="spinner dark" />Đang phân tích…</> : <><Icon name="spark" size={16} />Phân tích cú đánh</>}
           </button>
           {error && <p className="error" role="alert" style={{ marginTop: ".7rem" }}>{error}</p>}
 

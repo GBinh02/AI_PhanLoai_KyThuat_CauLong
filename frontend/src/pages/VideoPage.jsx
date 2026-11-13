@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { api } from "../api.js";
+import { LABELS, api } from "../api.js";
 import Icon from "../components/Icons.jsx";
 import AiPanel from "../components/AiPanel.jsx";
 import LabelPanel from "../components/LabelPanel.jsx";
 import Player from "../components/Player.jsx";
+import { Loading, toast } from "../components/Toaster.jsx";
 
 const AI_KEY = "bct_ai_on";
 const readAiPref = () => { try { return localStorage.getItem(AI_KEY) === "1"; } catch { return false; } };
@@ -46,11 +47,11 @@ export default function VideoPage() {
   const toggleAi = (v) => { setAiOn(v); writeAiPref(v); if (!v) setDrawing(false); };
 
   const addLabel = async (body) => {
-    try { const l = await api.addLabel(id, body); setLabels((ls) => [...ls, l].sort((a, b) => a.time_sec - b.time_sec)); }
+    try { const l = await api.addLabel(id, body); setLabels((ls) => [...ls, l].sort((a, b) => a.time_sec - b.time_sec)); toast(`Đã gắn nhãn ${LABELS[l.label]}`); }
     catch (e) { setError(e.message); }
   };
   const delLabel = async (lid) => {
-    try { await api.deleteLabel(id, lid); setLabels((ls) => ls.filter((l) => l.id !== lid)); }
+    try { await api.deleteLabel(id, lid); setLabels((ls) => ls.filter((l) => l.id !== lid)); toast("Đã xóa nhãn"); }
     catch (e) { setError(e.message); }
   };
 
@@ -60,16 +61,17 @@ export default function VideoPage() {
       const r = await api.analyze(id, { contact_sec: contact, box, window: win });
       setPreds((ps) => [...ps, r].sort((a, b) => a.contact_sec - b.contact_sec));
       setSelectedId(r.id);
+      toast(`AI gợi ý: ${LABELS[r.label]} (${(r.confidence * 100).toFixed(0)}%)`);
     } catch (e) { setAiError(e.message); } finally { setAnalyzing(false); }
   };
   const delPred = async (pid) => {
-    try { await api.deletePrediction(id, pid); setPreds((ps) => ps.filter((p) => p.id !== pid)); }
+    try { await api.deletePrediction(id, pid); setPreds((ps) => ps.filter((p) => p.id !== pid)); toast("Đã xóa kết quả AI"); }
     catch (e) { setAiError(e.message); }
   };
 
   const rename = async () => {
     const t = window.prompt("Tiêu đề mới", video.title);
-    if (t && t.trim()) setVideo(await api.rename(id, t.trim()));
+    if (t && t.trim()) { setVideo(await api.rename(id, t.trim())); toast("Đã đổi tên video"); }
   };
   const remove = async () => {
     if (!window.confirm("Xóa video này cùng toàn bộ nhãn và kết quả AI?")) return;
@@ -77,7 +79,7 @@ export default function VideoPage() {
   };
 
   if (error && !video) return <p className="error">{error} <Link to="/">Về danh sách</Link></p>;
-  if (!video) return <p className="muted">Đang tải…</p>;
+  if (!video) return <Loading />;
 
   const selected = preds.find((p) => p.id === selectedId);
   const marks = [
@@ -89,12 +91,12 @@ export default function VideoPage() {
     <>
       <div className="vhead">
         <div>
-          <Link to="/" className="crumbs link"><Icon name="back" size={15} />Video của bạn</Link>
+          <Link to="/" className="btn secondary sm back-btn"><Icon name="back" size={15} />Video của bạn</Link>
           <h1>{video.title}</h1>
         </div>
         <div className="row">
-          <button className="btn ghost sm" onClick={rename}><Icon name="edit" size={15} />Đổi tên</button>
-          <button className="btn ghost danger sm" onClick={remove}><Icon name="trash" size={15} />Xóa</button>
+          <button className="btn secondary sm" onClick={rename}><Icon name="edit" size={15} />Đổi tên</button>
+          <button className="btn danger-soft sm" onClick={remove}><Icon name="trash" size={15} />Xóa</button>
         </div>
       </div>
       {error && <p className="error" role="alert" style={{ marginBottom: "1rem" }}>{error}</p>}
